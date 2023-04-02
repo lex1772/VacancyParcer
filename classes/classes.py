@@ -17,20 +17,24 @@ class Engine(ABC):
 
 class HH(Engine):
     def get_request(self):
-        if hh_responce.status_code == 200:
-            vacancies = hh_responce.json()["items"]
+        resp = hh_responce("Россия, Python", 30, "noExperience")
+        if resp.status_code == 200:
+            vacancies = resp.json()["items"]
             for vacancy in vacancies:
-                print(vacancy["name"], vacancy["url"], vacancy["salary"])
+                url_response = requests.get(vacancy["url"])
+                details = url_response.json()
+                print(details["name"], details["salary"], details["experience"]["name"], details["alternate_url"])
         else:
-            print("Error:", hh_responce.status_code)
+            print("Error:", resp.status_code)
 
 
 class Superjob(Engine):
     def get_request(self):
-        if sj_responce.status_code == 200:
-            vacancies = sj_responce.json()["items"]
+        resp = sj_responce("Python", 30, 1)
+        if resp.status_code == 200:
+            vacancies = resp.json()['objects']
             for vacancy in vacancies:
-                #print(vacancy["name"], vacancy["url"], vacancy["salary"])
-                print(vacancy)
+                print(vacancy['profession'], vacancy['payment_from'], vacancy['payment_to'],
+                      vacancy['experience']['title'], vacancy['link'])
         else:
-            print("Error:", sj_responce.status_code)
+            print("Error:", resp.status_code)
